@@ -1,0 +1,164 @@
+#include "thingProperties.h"   //AUTOMATICALLY GENERATED to read your added Variables
+#include <Arduino_MKRIoTCarrier.h>
+MKRIoTCarrier carrier;
+
+int gesture=NONE;  //setup the gesture variable as NONE before it starts reading values
+uint32_t r, g, b, y;
+
+void setup() {
+
+  Serial.begin(9600);   //AUTOMATICALLY GENERATED to handle the serial monitor
+  initProperties();  // AUTOMATICALLY GENERATED Defined in thingProperties.h
+  ArduinoCloud.begin(ArduinoIoTPreferredConnection);  // AUTOMATICALLY GENERATED Connect to Arduino IoT Cloud
+  setDebugMessageLevel(2); // AUTOMATICALLY GENERATED set the amount of details in debug   message 0-4
+  ArduinoCloud.printDebugInfo(); // AUTOMATICALLY GENERATED print out the debug message
+
+  while(ArduinoCloud.connected() !=1 ){
+    ArduinoCloud.update();
+    delay(500);
+  }
+  delay(2000);
+
+  carrier.noCase();   //Not using the carrier case, change to carrier.withCase() if you are using it 
+  carrier.begin();    //Initialise the carrier
+  
+  int screenColor = 0;
+  carrier.display.fillScreen(screenColor);
+
+
+  r = carrier.leds.Color(255, 0, 0);
+  g = carrier.leds.Color(0, 255, 0);
+  b = carrier.leds.Color(0, 0, 255);
+  y = carrier.leds.Color(255, 255, 0);
+}
+
+void loop() {
+
+ArduinoCloud.update(); // AUTOMATICALLY GENERATED keep updating the Cloud with new data
+
+if (carrier.Light.gestureAvailable()) {
+  // A gesture was detected, read and print to Serial Monitor.
+  gesture = carrier.Light.readGesture();
+
+  switch (gesture) {      //Switch between the diferent gesture detections and update the cloud variable
+    case UP:
+      //increment up variable count
+      upCount++;
+      // add command to change lights red
+      carrier.leds.setPixelColor(0, r);
+      carrier.leds.setPixelColor(1, r);
+      carrier.leds.setPixelColor(2, r);
+      carrier.leds.setPixelColor(3, r);
+      carrier.leds.setPixelColor(4, r);
+      carrier.leds.show();
+      //command to modify screen
+      carrier.display.fillScreen(0xF800);
+      carrier.display.setTextSize(5);
+      carrier.display.setTextColor(0x0000);
+      carrier.display.setCursor(50, 100);
+      carrier.display.print("UP");
+      
+      break;
+  
+    case DOWN:
+      //increment down variable count
+      downCount++;
+      //add command to change lights blue
+      carrier.leds.setPixelColor(0, b);
+      carrier.leds.setPixelColor(1, b);
+      carrier.leds.setPixelColor(2, b);
+      carrier.leds.setPixelColor(3, b);
+      carrier.leds.setPixelColor(4, b);
+      carrier.leds.show();
+      //command to modify  screen
+      carrier.display.fillScreen(0x1F);
+      carrier.display.setTextSize(5);
+      carrier.display.setTextColor(0x0000);
+      carrier.display.setCursor(50, 100);
+      carrier.display.print("DOWN");
+      break;
+  
+    case LEFT:
+      //increment left count variable
+      leftCount++;
+      //command to change lights green
+      carrier.leds.setPixelColor(0, g);
+      carrier.leds.setPixelColor(1, g);
+      carrier.leds.setPixelColor(2, g);
+      carrier.leds.setPixelColor(3, g);
+      carrier.leds.setPixelColor(4, g);
+      carrier.leds.show();
+      //command to change screen
+      carrier.display.fillScreen(0x7E0);
+      carrier.display.setTextSize(5);
+      carrier.display.setTextColor(0x0000);
+      carrier.display.setCursor(50, 100);
+      carrier.display.print("LEFT");
+      break;
+  
+    case RIGHT:
+      //increment right count variable
+      rightCount++;
+      //command to change lights yellow
+      carrier.leds.setPixelColor(0, y);
+      carrier.leds.setPixelColor(1, y);
+      carrier.leds.setPixelColor(2, y);
+      carrier.leds.setPixelColor(3, y);
+      carrier.leds.setPixelColor(4, y);
+      carrier.leds.show();
+      //command to change screen
+      carrier.display.fillScreen(0xFFE0);
+      carrier.display.setTextSize(5);
+      carrier.display.setTextColor(0x0000);
+      carrier.display.setCursor(50, 100);
+      carrier.display.print("RIGHT");
+      break;
+  }
+}
+
+delay(200);
+
+}
+
+/*
+Since GestureDirection is READ_WRITE variable, onGestureDirectionChange() is
+executed every time a new value is received from IoT Cloud.
+*/
+void onGestureDirectionChange()  {
+// Add your code here to act upon GestureDirection change
+}
+/*
+  Since ScreenColor is READ_WRITE variable, onScreenColorChange() is
+  executed every time a new value is received from IoT Cloud.
+*/
+void onScreenColorChange()  {
+  // Add your code here to act upon ScreenColor change
+}
+/*
+  Since UpCount is READ_WRITE variable, onUpCountChange() is
+  executed every time a new value is received from IoT Cloud.
+*/
+void onUpCountChange()  {
+  // Add your code here to act upon UpCount change
+}
+/*
+  Since DownCount is READ_WRITE variable, onDownCountChange() is
+  executed every time a new value is received from IoT Cloud.
+*/
+void onDownCountChange()  {
+  // Add your code here to act upon DownCount change
+}
+/*
+  Since LeftCount is READ_WRITE variable, onLeftCountChange() is
+  executed every time a new value is received from IoT Cloud.
+*/
+void onLeftCountChange()  {
+  // Add your code here to act upon LeftCount change
+}
+/*
+  Since RightCount is READ_WRITE variable, onRightCountChange() is
+  executed every time a new value is received from IoT Cloud.
+*/
+void onRightCountChange()  {
+  // Add your code here to act upon RightCount change
+}
