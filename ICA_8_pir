@@ -1,0 +1,72 @@
+#include "thingProperties.h"   //AUTOMATICALLY GENERATED to read your added Variables
+#include <Arduino_MKRIoTCarrier.h>
+MKRIoTCarrier carrier;
+int pir = A0;
+bool pirState = LOW;
+
+
+//Colors
+uint32_t colorGreen = carrier.leds.Color(0, 50, 0);  //RED
+uint32_t colorRed = carrier.leds.Color(50, 0, 0);    //GREEN
+
+
+void setup() {
+
+Serial.begin(9600);  //AUTOMATICALLY GENERATED to handle the serial monitor
+
+initProperties();  // AUTOMATICALLY GENERATED Defined in thingProperties.h
+ArduinoCloud.begin(ArduinoIoTPreferredConnection);  // AUTOMATICALLY GENERATED Connect to Arduino IoT Cloud
+setDebugMessageLevel(4); // AUTOMATICALLY GENERATED set the amount of details in debug message 0-4
+ArduinoCloud.printDebugInfo(); // AUTOMATICALLY GENERATED print out the debug message
+
+while (ArduinoCloud.connected() != 1) {
+  ArduinoCloud.update();
+  delay(500);
+}
+delay(2000);
+
+pinMode(pir, INPUT);
+carrier.noCase();
+carrier.begin();
+}
+
+void loop() {
+ArduinoCloud.update(); // AUTOMATICALLY GENERATED keep updating the Cloud with new data
+//reading the status of the PIR sensor
+//pirState = digitalRead(pir);
+pirState = digitalRead(pir);
+Serial.println(pirState);
+//checking if the PIR sensor has detected movement
+if (pirState == HIGH || alarm==1) {
+  message = "Warning! Movement detected, Go to Dashboard to disable the alarm.";
+  Serial.println(message);
+  carrier.display.fillScreen(ST77XX_BLACK);
+  carrier.display.setCursor(30, 100);
+  carrier.display.setTextSize(2);
+  carrier.display.println(message);
+  carrier.leds.fill((colorRed), 0, 5);
+  carrier.leds.show();
+  alarm=1;
+} else {
+  message = "No movement detected. Everything is good here.";
+  Serial.println(message);
+  carrier.display.fillScreen(ST77XX_BLACK);
+  carrier.display.setCursor(30, 100);
+  carrier.display.setTextSize(2);
+  carrier.display.println(message);
+  carrier.leds.fill((colorGreen), 0, 5);
+  carrier.leds.show();
+}
+delay(1000);
+}
+
+void onMessageChange()  {
+// Add your code here to act upon Message change
+}
+/*
+Since Alarm is READ_WRITE variable, onAlarmChange() is
+executed every time a new value is received from IoT Cloud.
+*/
+void onAlarmChange()  {
+// Add your code here to act upon Alarm change
+}
